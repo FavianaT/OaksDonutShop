@@ -11,42 +11,36 @@ package entity;
 public class Order 
 {
     private int ID;
-    private int price;
+    private int quantity;
     private String dateTime;
-    private String itemName;
-    private int customerID;
+    private int donutID;
     
-    public Order(int ID, int price, String dateTime, String itemName, int customerID)
+    public Order(int ID, int quantity, String dateTime, int donutID)
     {
         this.ID = ID;
-        this.price = price;
+        this.quantity = quantity;
         this.dateTime = dateTime;
-        this.itemName = itemName;
-        this.customerID = customerID;
+        this.donutID = donutID;
     }
 
     public int getID() {
         return ID;
     }
 
-    public int getPrice() {
-        return price;
+    public int getQuantity() {
+        return quantity;
     }
 
     public String getDateTime() {
         return dateTime;
     }
-
-    public String getItemName() {
-        return itemName;
-    }
     
-    public int getCustomerID() {
-        return customerID;
+    public int getDonutID() {
+        return donutID;
     }
 
     @Override
     public String toString() {
-        return "Order{" + "ID=" + ID + ", price=" + price + ", dateTime=" + dateTime + ", itemName=" + itemName + ", customerID=" + customerID + '}';
+        return "Order{" + "ID=" + ID + ", quantity=" + quantity + ", dateTime=" + dateTime + ", donutID=" + donutID + '}';
     }
 }
