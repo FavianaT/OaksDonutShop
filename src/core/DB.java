@@ -15,7 +15,7 @@ import java.sql.*;
  */
 public class DB {
     private static final String DB_URL = "jdbc:derby:oakdonutshopdb;create=true;user=oakdonutshopdb;password=oakdonutshopdb";
-    private static final String MIGRATION_DIR = "db.migrations";
+    private static final String MIGRATION_DIR = "db";
     private static DB instance = null;
     private final Connection mConnection;
     
@@ -84,3 +84,4 @@ public class DB {
         flyway.migrate();//This performs the migration, basically creating tables and inserting values into tables if necessary
     }
 }
+
