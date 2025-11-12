@@ -4,5 +4,5 @@ CREATE TABLE OD_Order (
     Order_Date_TIME TIMESTAMP NOT NULL,
     Item_Name VARCHAR(20) NOT NULL,
     Donut_ID int NOT NULL,
-    FOREIGN KEY (Customer_ID) REFERENCES HD_Customer(Customer_ID)
+    FOREIGN KEY (Donut_ID) REFERENCES OD_Donut(Donut_ID)
 );
