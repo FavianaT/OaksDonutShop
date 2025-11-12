@@ -1,4 +1,4 @@
-CREATE TABLE HD_Order (
+CREATE TABLE OD_Order (
     Order_ID int NOT NULL PRIMARY KEY,
     Order_Quantity int NOT NULL,
     Order_Date_TIME TIMESTAMP NOT NULL,
