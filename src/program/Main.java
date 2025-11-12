@@ -17,9 +17,9 @@ public class Main extends javax.swing.JFrame {
     private static DonutDAO donutDAO = new DonutDAO();
 
     public Main(){
-        menu.add(new Donut(0,"Glazed Donut", 1.49));
-        menu.add(new Donut(1,"Strawberry Frosted Donut", 1.80));
-        menu.add(new Donut(2,"Chocolate Frosted Donut", 1.80));
+        menu.add(new Donut(0,"Glazed Donut", 1.50));
+        menu.add(new Donut(1,"Strawberry Frosted Donut", 2.00));
+        menu.add(new Donut(2,"Chocolate Frosted Donut", 2.00));
         menu.add(new Donut(3,"Jelly Donut", 3.00));
         menu.add(new Donut(4,"Boston Cream Donut", 3.50));
         menu.add(new Donut(5,"Old Fashioned Donut", 3.00));
