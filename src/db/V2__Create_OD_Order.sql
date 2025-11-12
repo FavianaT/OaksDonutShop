@@ -3,6 +3,6 @@ CREATE TABLE HD_Order (
     Order_Quantity int NOT NULL,
     Order_Date_TIME TIMESTAMP NOT NULL,
     Item_Name VARCHAR(20) NOT NULL,
-    Customer_ID int NOT NULL,
+    Donut_ID int NOT NULL,
     FOREIGN KEY (Customer_ID) REFERENCES HD_Customer(Customer_ID)
 );
