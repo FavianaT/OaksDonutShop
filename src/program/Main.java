@@ -15,7 +15,6 @@ import javax.swing.*;
 public class Main extends javax.swing.JFrame {
     private ArrayList<entity.Donut> menu = new ArrayList<entity.Donut>();
     private static DonutDAO donutDAO = new DonutDAO();
-    private static OrderDAO orderDAO = new OrderDAO();
 
     public Main(){
         menu.add(new Donut(0,"Glazed Donut", 1.49));
@@ -39,7 +38,7 @@ public class Main extends javax.swing.JFrame {
 
         // TITLE PANEL
         JPanel titlePanel = new JPanel();
-        titlePanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+        titlePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(titlePanel, BorderLayout.NORTH);
 
         JLabel title = new JLabel("Oak Donuts Shop");
@@ -51,7 +50,7 @@ public class Main extends javax.swing.JFrame {
         // WEST PANEL
         JPanel westPanel = new JPanel();
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
-        westPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        westPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         westPanel.setPreferredSize(new Dimension(150,600));
         add(westPanel, BorderLayout.WEST);
 
@@ -76,14 +75,6 @@ public class Main extends javax.swing.JFrame {
         JTextField searchField = new JTextField();
         westPanel.add(searchField);
 
-
-        westPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-        JLabel itemOptionsLabel= new JLabel("Donut Options");
-        itemOptionsLabel.setFont(new Font("Calibri", Font.BOLD, 16));
-        itemOptionsLabel.setForeground(Color.BLACK);
-        westPanel.add(itemOptionsLabel);
-
-
         westPanel.add(Box.createVerticalStrut(305));
 
         westPanel.setVisible(true);
@@ -92,7 +83,7 @@ public class Main extends javax.swing.JFrame {
 
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
+        centerPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(centerPanel, BorderLayout.CENTER);
 
         JLabel menulabel= new JLabel("Menu");
@@ -197,7 +188,6 @@ public class Main extends javax.swing.JFrame {
 
     public static void main(String args[]) {
         donutDAO = new DonutDAO();
-        orderDAO = new OrderDAO();
 
         java.awt.EventQueue.invokeLater(() -> {
             new Main().setVisible(true);
