@@ -75,7 +75,7 @@ public class Main extends javax.swing.JFrame {
         JTextField searchField = new JTextField();
         westPanel.add(searchField);
 
-        westPanel.add(Box.createVerticalStrut(305));
+        westPanel.add(Box.createVerticalStrut(450));
 
         westPanel.setVisible(true);
 
