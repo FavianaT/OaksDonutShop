@@ -2,6 +2,7 @@ package program;
 
 import java.awt.*;
 import java.awt.Color;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
+import java.util.Random;
 
 /**
  * @author Gokhan
@@ -26,8 +28,10 @@ public class Main extends javax.swing.JFrame {
 
     private JList<String> donutNames;
     private JScrollPane menuScrollPane;
-    private JTextField searchField;
+    private JLabel dynamicField;
     private DefaultListModel<String> listModel;
+    private ArrayList<String> recommendedList;
+    Random random = new Random();
 
 
     public Main(){
@@ -69,36 +73,27 @@ public class Main extends javax.swing.JFrame {
         westPanel.setPreferredSize(new Dimension(150,600));
         add(westPanel, BorderLayout.WEST);
         
-        JLabel searchLabel = new JLabel("Search:");
-        searchLabel.setFont(new Font("Calibri", Font.BOLD, 12));
-        searchLabel.setForeground(Color.BLACK);
-        westPanel.add(searchLabel);
+        JLabel dynamincLabel = new JLabel("Recommended Today:");
+        dynamincLabel.setFont(new Font("Calibri", Font.BOLD, 12));
+        dynamincLabel.setForeground(Color.BLACK);
+        westPanel.add(dynamincLabel);
 
-        searchField = new JTextField();
-        Document doc = searchField.getDocument();
-
-        listModel = new DefaultListModel<>();
-        donutNames = new JList<String>(listModel);
-        
-        doc.addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                updateDonutMenu();
-            }
-            public void removeUpdate(DocumentEvent e) {
-                updateDonutMenu();
-            }
-            public void changedUpdate(DocumentEvent e) {
-            }
-        });
+        dynamicField = new JLabel("");
+        recommendedList = new ArrayList<>();
+        recommendedList.add("Glazed Donut");
+        recommendedList.add("Strawberry Frosted Donut");
+        recommendedList.add("Chocolate Frosted Donut");
+        recommendedList.add("Jelly Donut");
+        recommendedList.add("Boston Cream Donut");
+        recommendedList.add("Old Fashioned Donut");
+        dynamicField.setText(recommendedList.get(random.nextInt(recommendedList.size())));
+        dynamicField.setFont(new Font("Calibri", Font.BOLD, 12));
 
 
-        westPanel.add(searchField);
-
-
+        westPanel.add(dynamicField);
         westPanel.add(Box.createVerticalStrut(450));
 
         westPanel.setVisible(true);
-
 
         // CENTER PANEL
 
@@ -287,35 +282,6 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             new Main().setVisible(true);
         });
-    }
-    
-    private String[] filterDonutMenu(String query){
-        String[] menuStringArr = new String[menu.size()];
-        int i = 0;
-        int j = menu.size();
-        for(;i < j; i++){
-            String menuDonutAsString = menu.get(i).toString();
-            if(menuDonutAsString.toUpperCase().contains(query.toUpperCase())){
-                menuStringArr[i] = menuDonutAsString;
-            }
-        }
-        return menuStringArr;
-    }
-    
-    private void updateDonutMenu(){
-        String[] filteredDonuts = filterDonutMenu(searchField.getText());
-
-        // Clear the current list model (this removes existing donuts)
-        listModel.clear();
-/*
-        // Add filtered donuts to the list model
-        for (String dount : filteredDonuts) {
-            listModel.addElement(donut);  // Adds a donut to the list model
-        }
-*/
-        // Revalidate and repaint the JScrollPane containing the JList
-        menuScrollPane.revalidate();
-        menuScrollPane.repaint();
     }
     
     javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
