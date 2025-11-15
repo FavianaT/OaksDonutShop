@@ -8,39 +8,33 @@ package entity;
  *
  * @author Gokhan
  */
-public class Order 
+public class Order
 {
     private int ID;
-    private int quantity;
-    private String dateTime;
-    private int donutID;
-    
-    public Order(int ID, int quantity, String dateTime, int donutID)
+    private double price;
+    private String donutName;
+
+    public Order(int ID, double price, String donutName)
     {
         this.ID = ID;
-        this.quantity = quantity;
-        this.dateTime = dateTime;
-        this.donutID = donutID;
+        this.price = price;
+        this.donutName = donutName;
     }
 
     public int getID() {
         return ID;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public double getPrice() {
+        return price;
     }
 
-    public String getDateTime() {
-        return dateTime;
-    }
-    
-    public int getDonutID() {
-        return donutID;
+    public String getDonutName() {
+        return donutName;
     }
 
     @Override
     public String toString() {
-        return "Order{" + "ID=" + ID + ", quantity=" + quantity + ", dateTime=" + dateTime + ", donutID=" + donutID + '}';
+        return "Order{" + "ID=" + ID + ", price=" + price + ", donutName=" + donutName + '}';
     }
 }
