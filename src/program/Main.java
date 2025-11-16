@@ -21,8 +21,12 @@ public class Main extends javax.swing.JFrame {
     private ArrayList<entity.Donut> menu = new ArrayList<entity.Donut>();
     private static DonutDAO donutDAO = new DonutDAO();
     private static OrderDAO orderDAO = new OrderDAO();
+
+    // Helps calculate the program
     private int orderIndex = 0;
     private int donutIndex = 0;
+
+    // Keeps price consistent
     JLabel subtotalAmount;
     JLabel taxAmount;
     JLabel totalAmount;
@@ -46,6 +50,7 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void initComponents(){
+        // Creates the GUI screen
         setTitle("Oak Donuts Shop");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1000, 600));
@@ -55,7 +60,7 @@ public class Main extends javax.swing.JFrame {
 
         setLayout(new BorderLayout());
 
-        // Title Panel
+        // Title Panel (Only has the title)
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(202, 230, 215));
         titlePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -66,7 +71,7 @@ public class Main extends javax.swing.JFrame {
         title.setForeground(Color.BLACK);
         titlePanel.add(title);
 
-        // West Panel
+        // West Panel (Simply contains the dynamic texts that gets chosen randomly with each program run)
         JPanel westPanel = new JPanel();
         westPanel.setBackground(new Color(182, 227, 207));
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
@@ -80,7 +85,9 @@ public class Main extends javax.swing.JFrame {
         westPanel.add(dynamincLabel);
 
         dynamicField = new JLabel("");
+        
         // Recommended Donuts are Random Every Program Run
+        
         recommendedList = new ArrayList<>();
         recommendedList.add("Glazed Donut");
         recommendedList.add("Strawberry Frosted Donut");
@@ -98,7 +105,7 @@ public class Main extends javax.swing.JFrame {
 
         westPanel.setVisible(true);
 
-        // Center Panel
+        // Center Panel (Contains the menu, the quantity, and the add to order button)
 
         JPanel centerPanel = new JPanel();
         centerPanel.setBackground(new Color(182, 227, 207));
@@ -128,6 +135,8 @@ public class Main extends javax.swing.JFrame {
         quantitySpinner.setMaximumSize(new Dimension(80,80));
         lowerCenterPanel.add(quantitySpinner);
 
+        // Add to order button takes the donut fron the donut menu before adding it to the order
+        // while also looking at the quantity and updating price
         JButton addButton = new JButton("Add to Order");
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -161,7 +170,7 @@ public class Main extends javax.swing.JFrame {
 
 
 
-        // East Panel
+        // East Panel (Contains the most of each panel. The order table, the subcost, tax, total cost, the clear, and checkout)
         JPanel eastPanel = new JPanel();
         eastPanel.setBackground(new Color(182, 227, 207));
         eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
@@ -202,8 +211,8 @@ public class Main extends javax.swing.JFrame {
         orderTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         orderTable.getColumnModel().getColumn(1).setPreferredWidth(350);
 
+        
         JScrollPane orderScroll = new JScrollPane(orderTable);
-
         orderScroll.setPreferredSize(new Dimension(400, 300));
         eastPanel.add(orderScroll);
 
@@ -220,8 +229,7 @@ public class Main extends javax.swing.JFrame {
         lowerEastWestPanel.add(taxLabel);
         JLabel totalPanel = new JLabel("Total:");
         lowerEastWestPanel.add(totalPanel);
-
-
+        
         lowerEastPanel.add(lowerEastWestPanel, BorderLayout.WEST);
 
         JPanel lowerEastEastPanel = new JPanel();
@@ -237,7 +245,8 @@ public class Main extends javax.swing.JFrame {
         lowerEastEastPanel.add(taxAmount);
         lowerEastEastPanel.add(totalAmount);
 
-        JButton clearButton = new JButton("Delete Order");
+        // Button works to clear the order table and reset cost back to $0
+        JButton clearButton = new JButton("Delete");
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int i = donutIndex - 1;
@@ -259,7 +268,7 @@ public class Main extends javax.swing.JFrame {
         });
         lowerEastWestPanel.add(clearButton);
         
-
+        // This works as a checkout, returning two different types of messages depending on if order is empty or not
         JButton checkoutButton = new JButton("Checkout");
         checkoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -297,11 +306,13 @@ public class Main extends javax.swing.JFrame {
         setVisible(true);
 
     }
-
+    
+    // Function that helps update the order table when a donut is added to order
     private void updateOrderTable(DefaultTableModel model, Donut donut, int quanity){
         model.addRow(new Object[]{donut.getName(), quanity,donut.getPrice(),donut.getPrice()*quanity});
     }
 
+    // Function that updates the prices of the subtotal, tax, and total
     private void updatePrices(JLabel subtotalAmount, JLabel taxAmount, JLabel totalAmount){
         DecimalFormat df = new DecimalFormat("#.00");
         subtotalAmount.setText("$"+df.format(getOrder(orderIndex).getPrice()));
@@ -309,54 +320,60 @@ public class Main extends javax.swing.JFrame {
         totalAmount.setText("$"+(df.format((getOrder(orderIndex).getPrice()+getOrder(orderIndex).getPrice()*0.06))));
     }
 
-    /**
-     * DONUT CRUD FUNCTIONS
-     */
+    // These are the donut crud functions
+
+    // This function takes inputs before adding the donut to the donut database
     private static void addDonut(int id, String name, double price) {
         Donut donut;
         donut = new Donut(id, name, price);
         donutDAO.insert(donut);
     }
 
+    // This function takes inputs before updating the donut in the donut database
     private static void updateDonut(int id, String name, double price) {
         Donut donut;
         donut = new Donut(id, name, price);
         donutDAO.update(donut);
     }
 
+    // This function takes inputs before deleting the donut from the donut database
     private static void deleteDonut(int id, String name, double price) {
         Donut donut;
         donut = new Donut(id, name, price);
         donutDAO.delete(donut);
     }
 
+    // This function takes an input of the id before looking through the donut database and returning the donut
     static Donut getDonut(int id) {
         Optional<Donut> donut = donutDAO.get(id);
         return donut.orElseGet(() -> new Donut(-1, "Non-exist", -1));
     }
 
 
-    /**
-     * ORDER CRUD FUNCTIONS
-     */
+    // These are the order crud functions
+
+    // This function takes inputs before inserting the new order into order database
     private static void addOrder(int ID, double price, String donutName) {
         Order order;
         order = new Order(ID, price, donutName);
         orderDAO.insert(order);
     }
 
+    // This function takes inputs before updating the existing order in the order database
     private static void updateOrder(int ID, double price, String donutName) {
         Order order;
         order = new Order(ID, price, donutName);
         orderDAO.update(order);
     }
 
+    // This function takes inputs before deleting the order from the order database
     private static void deleteOrder(int ID, double price, String donutName) {
         Order order;
         order = new Order(ID, price, donutName);
         orderDAO.delete(order);
     }
 
+    // This function takes an input of the id before looking through the order database and returning the order
     static Order getOrder(int id) {
         Optional<Order> order = orderDAO.get(id);
         if (order.isPresent()) {
@@ -376,6 +393,7 @@ public class Main extends javax.swing.JFrame {
         });
     }
 
+    // This operates as the default model that the order table takes
     javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
         new Object[][]{
         },
