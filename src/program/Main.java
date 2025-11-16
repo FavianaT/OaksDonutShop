@@ -2,7 +2,6 @@ package program;
 
 import java.awt.*;
 import java.awt.Color;
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -10,21 +9,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import entity.*;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.*;
 import java.util.Random;
 
 /**
- * @author Gokhan
+ * @author FavianaT
  */
 
 public class Main extends javax.swing.JFrame {
+    // Color has been Added to Panels
     private ArrayList<entity.Donut> menu = new ArrayList<entity.Donut>();
     private static DonutDAO donutDAO = new DonutDAO();
     private static OrderDAO orderDAO = new OrderDAO();
     private int orderIndex = 0;
+    private int donutIndex = 0;
+    JLabel subtotalAmount;
+    JLabel taxAmount;
+    JLabel totalAmount;
 
     private JList<String> donutNames;
     private JScrollPane menuScrollPane;
@@ -54,7 +55,7 @@ public class Main extends javax.swing.JFrame {
 
         setLayout(new BorderLayout());
 
-        // TITLE PANEL
+        // Title Panel
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(202, 230, 215));
         titlePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -65,20 +66,21 @@ public class Main extends javax.swing.JFrame {
         title.setForeground(Color.BLACK);
         titlePanel.add(title);
 
-        // WEST PANEL
+        // West Panel
         JPanel westPanel = new JPanel();
         westPanel.setBackground(new Color(182, 227, 207));
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
         westPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         westPanel.setPreferredSize(new Dimension(150,600));
         add(westPanel, BorderLayout.WEST);
-        
+
         JLabel dynamincLabel = new JLabel("Recommended Today:");
         dynamincLabel.setFont(new Font("Calibri", Font.BOLD, 12));
         dynamincLabel.setForeground(Color.BLACK);
         westPanel.add(dynamincLabel);
 
         dynamicField = new JLabel("");
+        // Recommended Donuts are Random Every Program Run
         recommendedList = new ArrayList<>();
         recommendedList.add("Glazed Donut");
         recommendedList.add("Strawberry Frosted Donut");
@@ -89,15 +91,17 @@ public class Main extends javax.swing.JFrame {
         dynamicField.setText(recommendedList.get(random.nextInt(recommendedList.size())));
         dynamicField.setFont(new Font("Calibri", Font.BOLD, 12));
 
-
         westPanel.add(dynamicField);
+
+
         westPanel.add(Box.createVerticalStrut(450));
 
         westPanel.setVisible(true);
 
-        // CENTER PANEL
+        // Center Panel
 
         JPanel centerPanel = new JPanel();
+        centerPanel.setBackground(new Color(182, 227, 207));
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(centerPanel, BorderLayout.CENTER);
@@ -116,6 +120,7 @@ public class Main extends javax.swing.JFrame {
         centerPanel.add(menuScrollPane);
 
         JPanel lowerCenterPanel = new JPanel();
+        lowerCenterPanel.setBackground(new Color(182, 227, 207));
         lowerCenterPanel.setLayout(new BoxLayout(lowerCenterPanel, BoxLayout.X_AXIS));
         centerPanel.add(lowerCenterPanel);
 
@@ -144,6 +149,7 @@ public class Main extends javax.swing.JFrame {
                         }
                     }
                     updateOrderTable(model, i, (int)quantitySpinner.getValue());
+                    updatePrices(subtotalAmount,taxAmount,totalAmount);
                     quantitySpinner.setValue(1);
                     menuDonutNames.clearSelection();
                 } else {
@@ -155,59 +161,138 @@ public class Main extends javax.swing.JFrame {
 
 
 
-        // EAST PANEL
+        // East Panel
         JPanel eastPanel = new JPanel();
+        eastPanel.setBackground(new Color(182, 227, 207));
         eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
         eastPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         add(eastPanel, BorderLayout.EAST);
-        
+
 
         JTable orderTable = new JTable();
+        orderTable.setBackground(new Color(220, 242, 232));
 
-        if (donutDAO.getAll()!=null){
-            java.util.List<Donut> currentOrder = donutDAO.getAll();
-            for(Donut donut : currentOrder){
-                model.addRow(new Object[]{donut.getName(), quantitySpinner.getValue(), donut.getPrice()*(int)quantitySpinner.getValue()});
-            }
-            orderTable.setModel(model);
+        int o = 0;
+        while(getOrder(o).getID()!=-1){
+            o++;
         }
+        orderIndex=o;
+
+        int i = 0;
+        while(getDonut(i).getID()!=-1) {
+            Donut donut = getDonut(i);
+            boolean found = false;
+            for (int j = 0; j < model.getRowCount(); j++) {
+                Donut previouslyAddedDonut = getDonut(j);
+                System.out.print(previouslyAddedDonut.getName() + " == " + donut.getName());
+                if (previouslyAddedDonut.getName().equals(donut.getName()) ) {
+                    model.setValueAt((int) model.getValueAt(j, 2) + 1, j, 2);
+                    model.setValueAt(Double.parseDouble((model.getValueAt(j, 4).toString().replace("$", ""))) + donut.getPrice(), j, 4);
+                    found = true;
+                    break;
+                }
+            }
+            DecimalFormat df = new DecimalFormat("#.00");
+            if (found == false)
+                model.addRow(new Object[]{donut.getName(), "$" + df.format(donut.getPrice()), "$" + df.format(donut.getPrice())});
+            i++;
+        }
+        donutIndex = i;
+        orderTable.setModel(model);
+        orderTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        orderTable.getColumnModel().getColumn(1).setPreferredWidth(350);
 
         JScrollPane orderScroll = new JScrollPane(orderTable);
-        orderScroll.setPreferredSize(new Dimension(400, 300)); // adjust size as you like
+
+        orderScroll.setPreferredSize(new Dimension(400, 300));
         eastPanel.add(orderScroll);
 
         JPanel lowerEastPanel = new JPanel();
+        lowerEastPanel.setBackground(new Color(182, 227, 207));
         lowerEastPanel.setLayout(new BorderLayout());
 
-        JPanel lowerEastEastPanel = new JPanel();
-        lowerEastEastPanel.setLayout(new BoxLayout(lowerEastEastPanel, BoxLayout.Y_AXIS));
-        JLabel subtotalLabel = new JLabel("Subtotal:");
-        lowerEastEastPanel.add(subtotalLabel);
-        JLabel taxLabel = new JLabel("Tax (6%):");
-        lowerEastEastPanel.add(taxLabel);
-        JLabel totalPanel = new JLabel("Total:");
-        lowerEastEastPanel.add(totalPanel);
-
-
-        lowerEastPanel.add(lowerEastEastPanel, BorderLayout.WEST);
-
         JPanel lowerEastWestPanel = new JPanel();
+        lowerEastWestPanel.setBackground(new Color(182, 227, 207));
         lowerEastWestPanel.setLayout(new BoxLayout(lowerEastWestPanel, BoxLayout.Y_AXIS));
+        JLabel subtotalLabel = new JLabel("Subtotal:");
+        lowerEastWestPanel.add(subtotalLabel);
+        JLabel taxLabel = new JLabel("Tax (6%):");
+        lowerEastWestPanel.add(taxLabel);
+        JLabel totalPanel = new JLabel("Total:");
+        lowerEastWestPanel.add(totalPanel);
 
-        JLabel subtotalAmount = new JLabel("$0.00");
-        JLabel taxAmount = new JLabel("$0.00");
-        JLabel totalAmount = new JLabel("$0.00");
-        if(getOrder(orderIndex).getID()!=-1){
-            DecimalFormat df = new DecimalFormat("#.00");
-            subtotalAmount.setText("$"+df.format(getOrder(orderIndex).getPrice()));
-            taxAmount.setText("$"+df.format(getOrder(orderIndex).getPrice()*0.06));
-            totalAmount.setText("$"+(df.format((getOrder(orderIndex).getPrice()+getOrder(orderIndex).getPrice()*0.06))));
-        }
-        lowerEastWestPanel.add(subtotalAmount);
-        lowerEastWestPanel.add(taxAmount);
-        lowerEastWestPanel.add(totalAmount);
 
-        lowerEastPanel.add(lowerEastWestPanel, BorderLayout.EAST);
+        lowerEastPanel.add(lowerEastWestPanel, BorderLayout.WEST);
+
+        JPanel lowerEastEastPanel = new JPanel();
+        lowerEastEastPanel.setBackground(new Color(182, 227, 207));
+        lowerEastEastPanel.setLayout(new BoxLayout(lowerEastEastPanel, BoxLayout.Y_AXIS));
+
+        subtotalAmount = new JLabel("$0.00");
+        taxAmount = new JLabel("$0.00");
+        totalAmount = new JLabel("$0.00");
+        if(getOrder(orderIndex).getID()!=-1) updatePrices(subtotalAmount, taxAmount, totalAmount);
+
+        lowerEastEastPanel.add(subtotalAmount);
+        lowerEastEastPanel.add(taxAmount);
+        lowerEastEastPanel.add(totalAmount);
+
+        JButton clearButton = new JButton("Delete Order");
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int i = donutIndex - 1;
+                Donut donut;
+                while(getDonut(i).getID() != -1) {
+                    donut = getDonut(i);
+                    deleteDonut(donut.getID(), donut.getName(), donut.getPrice());
+                    i--;
+                }
+                Order order = getOrder(orderIndex);
+                deleteOrder(order.getID(), order.getPrice(), order.getDonutName());
+                donutIndex=0;
+                model.setRowCount(0);
+
+                subtotalAmount.setText("$0.00");
+                taxAmount.setText("$0.00");
+                totalAmount.setText("$0.00");
+            }
+        });
+        lowerEastWestPanel.add(clearButton);
+        
+
+        JButton checkoutButton = new JButton("Checkout");
+        checkoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (model.getRowCount() > 0){
+                    int i = donutIndex - 1;
+                    Donut donut;
+                    while (getDonut(i).getID() >= 0) {
+                        donut = getDonut(i);
+                        deleteDonut(donut.getID(), donut.getName(), donut.getPrice());
+                        i--;
+                    }
+
+                    model.setRowCount(0);
+
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    JOptionPane checkoutPop = new JOptionPane();
+                    checkoutPop.showMessageDialog(null, "Thank you for ordering!\n Your total will be $" + df.format((getOrder(orderIndex).getPrice())*0.06 + getOrder(orderIndex).getPrice()));
+                    donutIndex = 0;
+                    orderIndex--;
+
+                    subtotalAmount.setText("$0.00");
+                    taxAmount.setText("$0.00");
+                    totalAmount.setText("$0.00");
+                } else if (model.getRowCount() == 0) {
+                    JOptionPane emptyPop = new JOptionPane();
+                    JOptionPane.showMessageDialog(null, "Your order is empty");
+                }
+
+            }
+        });
+        lowerEastEastPanel.add(checkoutButton);
+
+        lowerEastPanel.add(lowerEastEastPanel, BorderLayout.EAST);
         eastPanel.add(lowerEastPanel);
         setVisible(true);
 
@@ -216,7 +301,14 @@ public class Main extends javax.swing.JFrame {
     private void updateOrderTable(DefaultTableModel model, Donut donut, int quanity){
         model.addRow(new Object[]{donut.getName(), quanity,donut.getPrice(),donut.getPrice()*quanity});
     }
-    
+
+    private void updatePrices(JLabel subtotalAmount, JLabel taxAmount, JLabel totalAmount){
+        DecimalFormat df = new DecimalFormat("#.00");
+        subtotalAmount.setText("$"+df.format(getOrder(orderIndex).getPrice()));
+        taxAmount.setText("$"+df.format(getOrder(orderIndex).getPrice()*0.06));
+        totalAmount.setText("$"+(df.format((getOrder(orderIndex).getPrice()+getOrder(orderIndex).getPrice()*0.06))));
+    }
+
     /**
      * DONUT CRUD FUNCTIONS
      */
@@ -242,7 +334,7 @@ public class Main extends javax.swing.JFrame {
         Optional<Donut> donut = donutDAO.get(id);
         return donut.orElseGet(() -> new Donut(-1, "Non-exist", -1));
     }
-    
+
 
     /**
      * ORDER CRUD FUNCTIONS
@@ -283,7 +375,7 @@ public class Main extends javax.swing.JFrame {
             new Main().setVisible(true);
         });
     }
-    
+
     javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
         new Object[][]{
         },
@@ -295,8 +387,5 @@ public class Main extends javax.swing.JFrame {
                 false, false, false, false
         };
     };
-
-    private Image backgroundImage;
-
 
 }
