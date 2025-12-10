@@ -19,22 +19,22 @@ import java.util.Optional;
  * @author FavianaT
  */
 public class DonutDAO implements DAO<Donut>
-{   
+{
     public DonutDAO() {
-        
+
     }
     List<Donut> donuts;
     /**
      * Get a single customer entity as a customer object
      * @param id
-     * @return 
+     * @return
      */
     @Override
     public Optional<Donut> get(int id) {
         DB db = DB.getInstance();
         ResultSet rs = null;
         try {
-            String sql = "SELECT * FROM HD_Donut WHERE Donut_ID = ?";
+            String sql = "SELECT * FROM OD_Donut WHERE Donut_ID = ?";
             PreparedStatement stmt = db.getPreparedStatement(sql);
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
@@ -48,10 +48,10 @@ public class DonutDAO implements DAO<Donut>
             return null;
         }
     }
-    
+
     /**
      * Get all customer entities as a List
-     * @return 
+     * @return
      */
     @Override
     public List<Donut> getAll() {
@@ -59,7 +59,7 @@ public class DonutDAO implements DAO<Donut>
         ResultSet rs = null;
         donuts = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HD_Donut";
+            String sql = "SELECT * FROM OD_Donut";
             rs = db.executeQuery(sql);
             Donut donut = null;
             while (rs.next()) {
@@ -72,7 +72,7 @@ public class DonutDAO implements DAO<Donut>
             return null;
         }
     }
-    
+
     /**
      * Insert a customer object into customer table
      * @param donut
@@ -82,7 +82,7 @@ public class DonutDAO implements DAO<Donut>
     {
         DB db = DB.getInstance();
         try {
-            String sql = "INSERT INTO HD_Donut(Donut_ID, Donut_Name, Donut_Price) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO OD_Donut(Donut_ID, Donut_Name, Donut_Price) VALUES (?, ?, ?)";
             PreparedStatement stmt = db.getPreparedStatement(sql);
             stmt.setInt(1, donut.getID());
             stmt.setString(2, donut.getName());
@@ -95,7 +95,7 @@ public class DonutDAO implements DAO<Donut>
             System.err.println(ex.toString());
         }
     }
-    
+
     /**
      * Update a customer entity in database if it exists using a customer object
      * @param donut
@@ -104,7 +104,7 @@ public class DonutDAO implements DAO<Donut>
     public void update(Donut donut) {
         DB db = DB.getInstance();
         try {
-            String sql = "UPDATE HD_Donut SET Donut_Name=?, Donut_Price=? WHERE Donut_ID=?";
+            String sql = "UPDATE OD_Donut SET Donut_Name=?, Donut_Price=? WHERE Donut_ID=?";
             PreparedStatement stmt = db.getPreparedStatement(sql);
             stmt.setString(1, donut.getName());
             stmt.setDouble(2, donut.getPrice());
@@ -117,7 +117,7 @@ public class DonutDAO implements DAO<Donut>
             System.err.println(ex.toString());
         }
     }
-    
+
     /**
      * Delete a customer from customer table if the entity exists
      * @param donut
@@ -126,7 +126,7 @@ public class DonutDAO implements DAO<Donut>
     public void delete(Donut donut) {
         DB db = DB.getInstance();
         try {
-            String sql = "DELETE FROM HD_Donut WHERE Donut_ID = ?";
+            String sql = "DELETE FROM OD_Donut WHERE Donut_ID = ?";
             PreparedStatement stmt = db.getPreparedStatement(sql);
             stmt.setInt(1, donut.getID());
             int rowsDeleted = stmt.executeUpdate();
@@ -137,10 +137,10 @@ public class DonutDAO implements DAO<Donut>
             System.err.println(ex.toString());
         }
     }
-    
+
     /**
      * Get all column names in a list array
-     * @return 
+     * @return
      */
     @Override
     public List<String> getColumnNames() {
@@ -148,7 +148,7 @@ public class DonutDAO implements DAO<Donut>
         ResultSet rs = null;
         List<String> headers = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM HD_Donut WHERE Donut_ID = -1";//We just need this sql query to get the column headers
+            String sql = "SELECT * FROM OD_Donut WHERE Donut_ID = -1";//We just need this sql query to get the column headers
             rs = db.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
             //Get number of columns in the result set
@@ -160,6 +160,6 @@ public class DonutDAO implements DAO<Donut>
         } catch (SQLException ex) {
             System.err.println(ex.toString());
             return null;
-        } 
+        }
     }
 }
