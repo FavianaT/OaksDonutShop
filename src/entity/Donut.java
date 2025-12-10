@@ -16,7 +16,7 @@ public class Donut
     private int ID;
     private String name;
     private double price;
-    
+
     public Donut(int ID, String name, double price)
     {
         this.ID = ID;
